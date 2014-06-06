@@ -16,6 +16,9 @@ coverage
 # Bower
 bower_components
 
+# Config Variables
+config
+
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 

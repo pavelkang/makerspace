@@ -1,14 +1,23 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('static-favicon');
-var logger = require('morgan');
+var express      = require('express');
+var path         = require('path');
+var favicon      = require('static-favicon');
+var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var bodyParser   = require('body-parser');
+var routes       = require('./routes/index');
+var users        = require('./routes/users');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var db           = require('config/db');
+var passport     = require('passport');
+var mongoose     = require('mongoose');
+var session      = require('express-session');
 
-var app = express();
+var app          = express();
+
+// Database Connect
+mongoose.connect(db.url, function(err){
+    if (err) throw err;
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,6 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'bower_components')));
 
 app.use('/', routes);
 app.use('/users', users);
