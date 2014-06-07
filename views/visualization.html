@@ -6,21 +6,16 @@
     <title>Visualization</title>
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/visual.js"></script>
+    <link rel="stylesheet" href="/css/visual.css">
 </head>
 
-<body ng-controller="AppCtrl">
+<body ng-controller="MainCtrl">
     <h1>Visualization</h1>
-    <form ng-submit="getCommitData()">
-        Repo:
-        <input ng-model="info.repo">
-        <input type="submit">
-    </form>
-    <div class="repoInfo">
-        <p></p>
-        <p ng-model="info.repoApi"></p>
-    </div>
-    <!--<gh-visualization val="data"></gh-visualization>-->
+    {{data.yes}}
+    <gh-visualization val="data"></gh-visualization>
+    <visual></visual>
+    <div enter>Enter</div>
 </body>
 
 </html>

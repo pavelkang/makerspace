@@ -1,6 +1,6 @@
-var visualApp = angular.module('visualApp', []);
+var profileApp = angular.module('profileApp', []);
 
-visualApp.controller('AppCtrl', function($scope, $http) {
+profileApp.controller('AppCtrl', function($scope, $http) {
     $scope.info = {
         username: "",
         repo: "",
