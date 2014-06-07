@@ -7,17 +7,17 @@ var bodyParser   = require('body-parser');
 var routes       = require('./routes/index');
 var users        = require('./routes/users');
 
-var db           = require('config/db');
+var db           = require('./config/db');
 var passport     = require('passport');
 var mongoose     = require('mongoose');
 var session      = require('express-session');
 
 var app          = express();
 
-// Database Connect
-mongoose.connect(db.url, function(err){
-    if (err) throw err;
-})
+// Connect database
+try {
+    mongoose.connect(db.url);
+} catch (err) {console.log("DB error");}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,12 +27,19 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'bower_components')));
 
-app.use('/', routes);
-app.use('/users', users);
+// Passport
+app.use(cookieParser());
+app.use(bodyParser());
+app.use(session({secret : "Scotty"}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.Router());
+require('./config/configPass')(passport);
+require('./routes/index.js')(app, passport)
+
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

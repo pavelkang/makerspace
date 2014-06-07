@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html ng-app="d3DemoApp">
-  <head>
+<html ng-app="visualApp">
+
+<head>
     <meta charset="utf-8">
     <title>Visualization</title>
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
     <script src="/js/app.js"></script>
-  </head>
-  <body ng-controller="AppCtrl">
-    <!-- Here's where our visualization will go -->
-    <gh-visualization val="data"></gh-visualization>
-  </body>
+</head>
+
+<body ng-controller="AppCtrl">
+    <h1>Visualization</h1>
+    <form ng-submit="getCommitData()">
+        Repo:
+        <input ng-model="info.repo">
+        <input type="submit">
+    </form>
+    <div class="repoInfo">
+        <p></p>
+        <p ng-model="info.repoApi"></p>
+    </div>
+    <!--<gh-visualization val="data"></gh-visualization>-->
+</body>
+
 </html>
