@@ -14,7 +14,7 @@ lib-cov
 coverage
 
 # Bower
-bower_components
+#bower_components
 
 # Config Variables
 # config
