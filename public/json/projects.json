@@ -1,0 +1,9 @@
+{
+	"nodes" : [
+		{"name":"Kai", "project":1},
+		{"name":"Taylor", "project":1}
+	],
+	"links" : [
+		{"source":0, "target":1, "value":10}
+	]
+}

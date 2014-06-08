@@ -6,16 +6,20 @@
     <title>Visualization</title>
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
+    <script src="/angular-resource/angular-resource.js"></script>
     <script src="/js/visual.js"></script>
     <link rel="stylesheet" href="/css/visual.css">
 </head>
 
 <body ng-controller="MainCtrl">
     <h1>Visualization</h1>
-    {{data.yes}}
+    <a href="/profile">Go back to profile page</a>
     <gh-visualization val="data"></gh-visualization>
-    <visual></visual>
-    <div enter>Enter</div>
+    <ul>
+        <li ng-repeat="project in data.projects">
+            {{project.repo}} - {{project.developers}}
+        </li>
+    </ul>
 </body>
 
 </html>

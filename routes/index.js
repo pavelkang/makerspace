@@ -18,6 +18,10 @@ module.exports = function(app, passport) {
     app.get('/visual', function(req, res) {
         res.sendfile('views/visualization.html');
     })
+    // Socket IO
+    app.get('/chat', function(req, res) {
+        res.sendfile('views/chat.html');
+    })
     // GET API for getting user information from database
     app.get('/api/getUser', function(req, res) {
         User.findOne({
@@ -28,8 +32,28 @@ module.exports = function(app, passport) {
             res.json(user);
         });
     });
+    // GET API for getting project information from database
+    app.get('/api/getProjects', function(req, res) {
+        Project.find({}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                throw err;
+            }
+        });
+    });
     // POST API for registering projects
     app.post('/api/registerProject', function(req, res) {
+        User.findOne({
+            'github.id': req.user.github.id
+        }, function(err, user) {
+            user.hasProject = true;
+            user.save(function(err) {
+                if (err) {
+                    throw err;
+                }
+            });
+        });
         Project.find({}, function(err, docs) {
             if (!err) {
                 var a = util.projectExists(req.body.repoApi, docs);
@@ -73,6 +97,10 @@ module.exports = function(app, passport) {
         req.logout();
         res.redirect('/');
     });
+    /*
+    http.listen(3000, function(){
+        console.log('listen on 3000')
+    }) */
 };
 
 function isLoggedIn(req, res, next) {

@@ -6,13 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var routes       = require('./routes/index');
 var users        = require('./routes/users');
-
 var db           = require('./config/db');
 var passport     = require('passport');
 var mongoose     = require('mongoose');
 var session      = require('express-session');
-
 var app          = express();
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+var debug = require('debug')('makerspace');
 
 // Connect database
 try {
@@ -49,7 +51,6 @@ app.use(function(req, res, next) {
 });
 
 /// error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -72,5 +73,20 @@ app.use(function(err, req, res, next) {
     });
 });
 
+app.set('port', process.env.PORT || 3000);
 
-module.exports = app;
+io.on('connection', function(socket){
+    console.log("user connected");
+    socket.on('disconnect', function() {
+        console.log('disconnect');
+    });
+    socket.on('message', function(msg) {
+        console.log('message: ' + msg);
+        io.emit('message', msg);
+    })
+});
+
+
+server.listen(app.get('port'), function(){
+  debug('Express server listening on port ' + server.address().port);   
+})

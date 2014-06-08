@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var userSchema = mongoose.Schema({
-	nickname : String,
+	hasProject : Boolean,
 	email : String,
 	github : {
 		id : String,

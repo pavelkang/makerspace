@@ -5,6 +5,7 @@ profileApp.controller('AppCtrl', function($scope, $http) {
         username: "",
         repo: "",
         repoApi: "",
+        hasProject: false,
         verified: false
     };
     $scope.other = {
@@ -14,12 +15,11 @@ profileApp.controller('AppCtrl', function($scope, $http) {
     $http.get('/api/getUser')
         .success(function(user) {
             $scope.info.username = user.github.name;
+            $scope.info.hasProject = user.hasProject;
         });
     // Get Commit data from Github API
     $scope.getCommitData = function() {
         $scope.info.repoApi = 'https://api.github.com/repos/' + $scope.info.username + '/' + $scope.info.repo + '/commits';
-        //var apiAddress2 = 'https://api.github.com/users/' + $scope.info.username
-        //				  + '/repos' ;
         $http.get($scope.info.repoApi)
             .success(function(data) {
                 // This repository has been verified

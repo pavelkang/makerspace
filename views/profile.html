@@ -7,11 +7,16 @@
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
     <script src="/js/profile.js"></script>
+    <link rel="stylesheet" href="/css/profile.css">
 </head>
 
 <body ng-controller="AppCtrl">
+    <h1 class="username">
+        {{info.username}}
+    </h1>
     <h1>Profile</h1>
-    <div class="registerRepo">
+    <!-- Register for a new project as the project owner -->
+    <div class="registerRepo" ng-show="!info.hasProject">
         <h2>Register Your Project</h2>
         <form ng-submit="getCommitData()">
             Repo:
@@ -25,7 +30,15 @@
         <br>
         <button ng-click="register()">Register this project on Makerspace</button>
     </div>
+    <!-- Delete project as owner -->
+    <div class="deleteProject" ng-show="info.hasProject">
+    <h2>Delete Existing Project</h2>
+    <button>
+        Submit
+    </button>
+    </div>
     <hr>
+    <!-- Participate in other people's project as a participant -->
     <div class="participateIn">
         <h2>Participate In Other's Project</h2>
         <form ng-submit="participate">

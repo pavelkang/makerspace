@@ -1,11 +1,31 @@
-var visualApp = angular.module('visualApp', []);
+var visualApp = angular.module('visualApp', ['ngResource']);
 
-visualApp.controller('MainCtrl', function($scope, $http){
-	$scope.data = {
-		yes : "Yes"
-	}
+visualApp.factory('projectData', function($resource) {
+	return $resource('/api/getProjects', {}, {
+		query: {method: "GET", params: {}, isArray:true}
+	})
 })
 
+visualApp.controller('MainCtrl', function($scope, $http, $timeout, projectData){
+	$scope.data = {
+		projects: []
+	};
+	/*
+	(function tick() {
+		$scope.data.projects = projectData.query(function(){
+			$timeout(tick, 5000);
+		});
+	})() */
+});
+
+
+
+
+
+
+
+
+/*
 visualApp.directive('visual', function() {
 	return {
 		restrict : 'E',
@@ -24,9 +44,10 @@ visualApp.directive('visualAd', function() {
 
 visualApp.directive('enter', function() {
 	return function(scope, element) {
-		element.bind("mouseHover", function() {
+		element.bind("mouseenter", function() {
 			console.log('a')
 			element.toggleClass("red");
 		})
 	}
 })
+*/
