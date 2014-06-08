@@ -88,5 +88,5 @@ io.on('connection', function(socket){
 
 
 server.listen(app.get('port'), function(){
-  debug('Express server listening on port ' + server.address().port);   
+  debug('Express server listening on port ' + app.get('port'));   
 })
