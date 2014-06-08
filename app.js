@@ -75,14 +75,21 @@ app.use(function(err, req, res, next) {
 
 app.set('port', process.env.PORT || 3000);
 
+// chatter name
+io.on('connection', function(client) {
+    client.on('join', function(name) {
+        client.name = name;
+    })
+})
+
 io.on('connection', function(socket){
     console.log("user connected");
     socket.on('disconnect', function() {
         console.log('disconnect');
     });
     socket.on('message', function(msg) {
-        console.log('message: ' + msg);
-        io.emit('message', msg);
+        console.log(socket.name + 'message: ' + msg);
+        io.emit('message', socket.name + " :" + msg);
     })
 });
 
