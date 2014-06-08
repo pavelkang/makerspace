@@ -75,6 +75,12 @@ app.use(function(err, req, res, next) {
 
 app.set('port', process.env.PORT || 3000);
 
+// For Heroku
+io.configure(function() {
+    io.set('transports', ['xhr-polling']);
+    io.set('polling duration', 10);
+})
+
 io.on('connection', function(socket){
     console.log("user connected");
     socket.on('disconnect', function() {
