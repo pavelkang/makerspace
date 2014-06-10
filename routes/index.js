@@ -13,11 +13,16 @@ module.exports = function(app, passport) {
     /* Profile page */
     app.get('/profile', isLoggedIn, function(req, res) {
         res.sendfile('views/profile.html');
-    })
+    });
     /* Visualization page */
+    // TODO isLoggedIn
     app.get('/visual', function(req, res) {
         res.sendfile('views/visualization.html');
-    })
+    });
+    /* About page */
+    app.get('/about', function(req, res) {
+        res.sendfile('views/about.html');
+    });    
     // Socket IO
     app.get('/chat', function(req, res) {
         res.sendfile('views/chat.html');
@@ -81,26 +86,23 @@ module.exports = function(app, passport) {
 
     });
     // Github Login
-    app.get('/auth/github', passport.authenticate('github', {
-        scope: 'id'
-    }));
-    app.get('/auth/github/callback', passport.authenticate(
-            'github', {
-                failureRedirect: '/error'
-            }),
+    app.get('/auth/github',
+        passport.authenticate('github'),
+        function(req, res) {});
+    // Github callback
+    app.get('/auth/github/callback',
+        passport.authenticate('github', {
+            failureRedirect: '/'
+        }),
         function(req, res) {
             res.redirect('/profile');
-        }
-    );
+        });
+
     app.get('/logout', function(req, res) {
         console.log('Logging out...');
         req.logout();
         res.redirect('/');
     });
-    /*
-    http.listen(3000, function(){
-        console.log('listen on 3000')
-    }) */
 };
 
 function isLoggedIn(req, res, next) {

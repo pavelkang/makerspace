@@ -6,20 +6,30 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var routes       = require('./routes/index');
 var users        = require('./routes/users');
-var db           = require('./config/db');
 var passport     = require('passport');
 var mongoose     = require('mongoose');
 var session      = require('express-session');
 var app          = express();
-var http = require('http');
-var server = http.createServer(app);
-var io = require('socket.io').listen(server);
-var debug = require('debug')('makerspace');
+var http         = require('http');
+var server       = http.createServer(app);
+var io           = require('socket.io').listen(server);
+var debug        = require('debug')('makerspace');
+//var redis        = require('redis');
 
+if (0) {
+    var mongoURL     = process.env.mongoURL;
+    var clientID     = process.env.clientID;
+    var clientSecret = process.env.clientSecret;
+    var callbackURL  = process.env.callbackURL;
+} else {
+    var secret = require("./secret/secret");
+    var mongoURL = secret.mongoURL;
+    var clientID = secret.clientID;
+    var clientSecret = secret.clientSecret;
+    var callbackURL  = secret.callbackURL;
+}
 // Connect database
-try {
-    mongoose.connect(db.url);
-} catch (err) {console.log("DB error");}
+mongoose.connect(mongoURL);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,7 +49,7 @@ app.use(session({secret : "Scotty"}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.Router());
-require('./config/configPass')(passport);
+require('./config/configPass')(passport, clientID, clientSecret, callbackURL);
 require('./routes/index.js')(app, passport)
 
 
@@ -72,28 +82,41 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-app.set('port', process.env.PORT || 3000);
-
-// chatter name
-io.on('connection', function(client) {
-    client.on('join', function(name) {
-        client.name = name;
-    })
-})
+/*
+try {
+var redisClient = redis.createClient(); }
+catch (err) {
+    console.err(err)
+}*/
 
 io.on('connection', function(socket){
-    console.log("user connected");
-    socket.on('disconnect', function() {
-        console.log('disconnect');
+
+    socket.on('join', function(name) {
+        socket.name = name;
+        /*
+        redisClient.lrange('messages', 0, -1, function(err, messages) {
+            console.log(messages);
+            messages = messages.reverse();
+            messages.forEach(function(data){
+                data = JSON.parse(data);
+                socket.emit('message', data);
+            })
+        })*/
     });
     socket.on('message', function(msg) {
-        console.log(socket.name + 'message: ' + msg);
-        io.emit('message', socket.name + " :" + msg);
-    })
+        /*
+        var message = JSON.stringify({name:socket.name, data:msg});
+        redisClient.lpush('messages', message, function(err, res){
+            redisClient.ltrim('messages', 0, 10);
+        })*/
+        io.emit('message', {name:socket.name, data:msg});
+    });
+    socket.on('disconnect', function() {
+        console.log('disconnect');
+    });    
 });
 
-
+app.set('port', process.env.PORT || 3000);
 server.listen(app.get('port'), function(){
   debug('Express server listening on port ' + app.get('port'));   
 })
