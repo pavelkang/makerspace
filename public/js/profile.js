@@ -1,13 +1,41 @@
 var profileApp = angular.module('profileApp', []);
 
-profileApp.controller('AppCtrl', function($scope, $http) {
+profileApp.factory('socket', function($rootScope) {
+    var socket = io();
+    return {
+        on: function(eventName, callback) {
+            socket.on(eventName, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    callback.apply(socket.args);
+                });
+            });
+        },
+        emit: function(eventName, data, callback) {
+            socket.emit(eventName, data, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    if (callback)
+                        callback.apply(socket.args);
+                });
+            });
+        }
+    };
+});
+
+profileApp.controller('AppCtrl', function($window, $scope, $http, socket) {
+
     $scope.info = {
         username: "",
         repo: "",
         repoApi: "",
-        hasProject: false,
         verified: false
     };
+    // This allows elements not to be shown before the HTTP call
+    $scope.helpers = {
+        hasProject: false,
+        noProject: false
+    }
     $scope.other = {
         repo: ""
     }
@@ -15,7 +43,13 @@ profileApp.controller('AppCtrl', function($scope, $http) {
     $http.get('/api/getUser')
         .success(function(user) {
             $scope.info.username = user.github.name;
-            $scope.info.hasProject = user.hasProject;
+            if (user.repo) {
+                $scope.info.repo = user.repo;
+                $scope.info.repoApi = user.repoApi;
+                $scope.helpers.hasProject = true;
+            } else {
+                $scope.helpers.noProject = true;
+            }
         });
     // Get Commit data from Github API
     $scope.getCommitData = function() {
@@ -24,23 +58,34 @@ profileApp.controller('AppCtrl', function($scope, $http) {
             .success(function(data) {
                 // This repository has been verified
                 $scope.info.verified = true;
-                console.log(data);
             });
     };
     // Register for a project
     $scope.register = function() {
         if ($scope.info.verified) {
-            console.log('hi');
             $http.post('/api/registerProject', $scope.info)
                 .success(function(data) {
                     if (data === 'Y') {
+                        // Successfully registered a project
+                        socket.emit('new project', {user:$scope.info.username, repo:$scope.info.repo});
                         alert('Project ' + $scope.info.repo + ' registered!');
+                        $window.location.reload();
                     } else {
                         alert('Project ' + $scope.info.repo + ' already exists!');
                     }
                 });
+
         }
     };
-
+    // Delete a project
+    $scope.deleteProject = function() {
+        $http.post('/api/deleteProject', $scope.info)
+        .success(function(data){
+            if (data === 'Y') {
+                alert('Project ' + $scope.info.repo+' deleted!');
+                $window.location.reload();
+            }
+        })
+    }
 
 });

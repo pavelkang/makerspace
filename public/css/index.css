@@ -2,8 +2,14 @@ html {
 	font-size: 16px;
 }
 
+a {
+	text-decoration: none;
+	cursor: pointer;
+}
+
 body {
 	margin : 0;
+	padding : 0;
 	font-family: 'Roboto', sans-serif;
 	font-size: 100%; /* 16 * 62.5% = 10 */
 }
@@ -53,6 +59,11 @@ nav li a:hover {
 	color: #34495e;
 }
 
+#home a{
+	color : #34495e;
+	background-color: tomato;
+}
+
 .top_panel {
 	height : 20%;
 	width : 100%;
@@ -66,12 +77,6 @@ nav li a:hover {
 	float : left;
 }
 
-#chat {
-	position: relative;
-	float : right;
-	right : 10%;
-}
-
 .login {
 	color : orange;
 	font-size: 3.6em;
@@ -79,4 +84,32 @@ nav li a:hover {
 }
 .login:hover {
 	-webkit-transform : rotate(360deg);	
+}
+
+
+/*Top-right corner icon*/
+#visualNav{
+	width : 10em;
+	font-size: .8em;
+	position : fixed;
+	top : 2%;
+	right : 0;
+}
+
+#userIcon {
+	font-size : 2em;
+}
+
+#backText {
+	color : tomato;
+	opacity : 0;
+	-webkit-transition: opacity .5s;
+}
+
+#visualNav:hover #backText {
+	opacity: 100;
+}
+
+#visualNav a:link, #visualNav a:visited {
+	color : tomato; 
 }

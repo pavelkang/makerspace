@@ -47,12 +47,33 @@ module.exports = function(app, passport) {
             }
         });
     });
-    // POST API for registering projects
+    // API for deleting projects
+    app.post('/api/deleteProject', function(req, res){
+        User.findOne({
+            'github.id' : req.user.github.id
+        }, function(err, user){
+            user.repo = '';
+            user.repoApi = '';
+            user.save(function(err){
+                if (err)
+                    throw err;
+            })
+        });
+        Project.remove({"repoApi":req.body.repoApi}, function(err, deleted){
+            if (err) {
+                throw err;}
+            else {
+                res.send('Y');
+            }
+        })
+    })
+    // API for registering projects
     app.post('/api/registerProject', function(req, res) {
         User.findOne({
             'github.id': req.user.github.id
         }, function(err, user) {
-            user.hasProject = true;
+            user.repo = req.body.repo;
+            user.repoApi = req.body.repoApi;            
             user.save(function(err) {
                 if (err) {
                     throw err;
@@ -62,10 +83,9 @@ module.exports = function(app, passport) {
         Project.find({}, function(err, docs) {
             if (!err) {
                 var a = util.projectExists(req.body.repoApi, docs);
-                console.log(a);
                 if (a) {
                     // Project already exists
-                    res.send('E');
+                    res.send('N');
                 } else {
                     // Project does not exist
                     var newProject = new Project();

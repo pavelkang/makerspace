@@ -4,22 +4,32 @@
 <head>
     <meta charset="utf-8">
     <title>Visualization</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/visual.css">
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
     <script src="/angular-resource/angular-resource.js"></script>
     <script src="/js/visual.js"></script>
-    <link rel="stylesheet" href="/css/visual.css">
 </head>
-
 <body ng-controller="MainCtrl">
-    <h1>Visualization</h1>
-    <a href="/profile">Go back to profile page</a>
-    <gh-visualization val="data"></gh-visualization>
-    <ul>
-        <li ng-repeat="project in data.projects">
-            {{project.repo}} - {{project.developers}}
-        </li>
-    </ul>
+    <header>
+        <nav id="visualNav">
+            <span id="backText">Back to Profile </span><a href="/profile"><span class="fa fa-user" id="userIcon"> </span></a>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Visualization</h1>
+        <gh-visualization val="data"></gh-visualization>
+        <ul>
+            <li ng-repeat="project in data.projects">
+                {{project.repo}} - {{project.developers}}
+            </li>
+        </ul>
+    </div>
+    <footer></footer>
 </body>
 
 </html>

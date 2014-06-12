@@ -1,3 +1,9 @@
+<!-- TODO
+1. Delete a project
+2. Use socket.io to emit an event
+3. Learn how the factory code works and watch angular best practices
+ -->
+
 <!DOCTYPE html>
 <html ng-app="profileApp">
 
@@ -7,52 +13,59 @@
     <script src="/d3/d3.js"></script>
     <script src="/angular/angular.js"></script>
     <script src="/js/profile.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
     <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css">
 </head>
 
 <body ng-controller="AppCtrl">
-    <h1 class="username">
-        {{info.username}}
-    </h1>
-    <h1>Profile</h1>
-    <!-- Register for a new project as the project owner -->
-    <div class="registerRepo" ng-show="!info.hasProject">
-        <h2>Register Your Project</h2>
-        <form ng-submit="getCommitData()">
+    <header>
+        <nav id="visualNav">
+            <span id="backText">Back to Visual</span>
+            <a href="/visual">
+                <span class="fa fa-cogs" id="userIcon"></span>
+            </a>
+        </nav>
+    </header>
+    <div class="container">
+        <h1 class="username">
+            {{info.username}} - {{info.repo}}
+        </h1>
+        <!-- Register for a new project as the project owner -->
+        <div class="registerRepo" ng-show="helpers.noProject">
+            <h2>Register Your Project</h2>
+            <form ng-submit="getCommitData()">
+                Repo:
+                <input ng-model="info.repo">
+                <input type="submit" placeholder="Check Repo">
+            </form>
             Repo:
-            <input ng-model="info.repo">
-            <input type="submit" placeholder="Check Repo">
-        </form>
-        Repo:
-        <span>{{info.repo}}</span>
-        <br>Api:
-        <span>{{info.repoApi}}</span>
-        <br>
-        <button ng-click="register()">Register this project on Makerspace</button>
-    </div>
-    <!-- Delete project as owner -->
-    <div class="deleteProject" ng-show="info.hasProject">
-    <h2>Delete Existing Project</h2>
-    <button>
-        Submit
-    </button>
-    </div>
-    <hr>
-    <!-- Participate in other people's project as a participant -->
-    <div class="participateIn">
-        <h2>Participate In Other's Project</h2>
-        <form ng-submit="participate">
-            Repo URL:
-            <input ng-model="other.repo">
-            <input type="submit" placeholder="Participate!">
-        </form>
-    </div>
-    <hr>
-    <div class="gotoVis">
-        <a href="/visual">Go to visualization page</a>
-    </div>
+            <span>{{info.repo}}</span>
+            <br>Api:
+            <span>{{info.repoApi}}</span>
+            <br>
+            <button ng-click="register()">Register this project on Makerspace</button>
+        </div>
+        <!-- Delete project as owner -->
+        <div class="deleteProject" ng-show="helpers.hasProject">
+            <h2>Delete Existing Project</h2>
+            <button ng-click="deleteProject()">Delete</button>
+        </div>
+        <!-- Participate in other people's project as a participant -->
+        <div class="participateIn" ng-show="helpers.noProject">
+            <h2>Participate In Other's Project</h2>
+            <form ng-submit="participate">
+                Repo URL:
+                <input ng-model="other.repo">
+                <input type="submit" placeholder="Participate!">
+            </form>
+        </div>
 
-    <!--<gh-visualization val="data"></gh-visualization>-->
+    </div>
+    <footer></footer>
 </body>
 
 </html>

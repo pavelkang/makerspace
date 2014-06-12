@@ -91,6 +91,11 @@ catch (err) {
 
 io.on('connection', function(socket){
 
+    socket.on('new project', function(data) {
+        console.log(data.user);
+        console.log(data.repo);
+    })
+
     socket.on('join', function(name) {
         socket.name = name;
         /*
