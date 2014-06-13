@@ -1,8 +1,14 @@
 /*TODO
-scope.$watch
-deferred*/
-
-
+1. Make ng-switch to switch between views (Make other views blank at first)
+2. Attach the chat window
+3. Use socket.io to emit "new project" events ...
+4. Current User online ... Current Number of projects ...
+* To Understand
+1. scope.$watch
+2. deferred
+3. socket.io
+* To Watch
+1. More AngularJS Videos*/
 var visualApp = angular.module('visualApp', ['ngResource']);
 
 visualApp.factory('projectData', function($resource) {
