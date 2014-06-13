@@ -45,6 +45,7 @@ nav li {
 	text-align: center;
 	background-color: #bdc3c7;
 	-webkit-transition: background-color .5s;
+	transition : background-color .5s;
 }
 
 nav li:hover {
@@ -53,6 +54,7 @@ nav li:hover {
 
 nav li a {
 	-webkit-transition: color 1s;
+	transition : color 1s;
 }
 
 nav li a:hover {
@@ -81,9 +83,11 @@ nav li a:hover {
 	color : orange;
 	font-size: 3.6em;
 	-webkit-transition : -webkit-transform 1s;
+	transition : transform 1s;
 }
 .login:hover {
 	-webkit-transform : rotate(360deg);	
+	transform : rotate(360deg);
 }
 
 
@@ -104,6 +108,7 @@ nav li a:hover {
 	color : tomato;
 	opacity : 0;
 	-webkit-transition: opacity .5s;
+	transition : opacity .5s;
 }
 
 #visualNav:hover #backText {
