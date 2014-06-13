@@ -39,10 +39,12 @@
         <input ng-model="c" type="number">
         <input ng-model="d" type="number">                
         <button ng-click="changeData()">Change Data</button>
-        <select ng-model="selection" ng-options="item for item in items"></select>
-        <bar-graph data="data.barGraphData"></bar-graph>
-        <force-graph data=""></force-graph>
-        <pie-graph data=""></pie-graph>
+        <select ng-model="selection" ng-options="graph for graph in graphs"></select>
+        <div ng-switch on="selection">
+            <bar-graph data="data.barGraphData" ng-switch-when="Bar"></bar-graph>
+            <force-graph data="" ng-switch-when="Force"></force-graph>
+            <pie-graph data="" ng-switch-when="Pie"></pie-graph>
+        </div>        
     </div>
     <footer></footer>
 

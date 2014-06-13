@@ -1,5 +1,5 @@
 /*TODO
-1. Make ng-switch to switch between views (Make other views blank at first)
+
 2. Attach the chat window
 3. Use socket.io to emit "new project" events ...
 4. Current User online ... Current Number of projects ...
@@ -47,6 +47,8 @@ visualApp.factory('commitData', function($http, $q){
 })
 
 visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectData){
+	$scope.graphs = ['Bar', 'Force', 'Pie'];
+	$scope.selection = 'Bar';
 	$scope.data = {
 		projects : [], // of objects "project"
 		repoData : [], // of arrays of objects "commit"
@@ -57,7 +59,8 @@ visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectDat
 		$scope.data.test[1] = $scope.b;
 		$scope.data.test[2] = $scope.c;
 		$scope.data.test[3] = $scope.d;
-	}
+	};
+
 	
 	/*Retrieve all registered projects*/
 	function getData() {
