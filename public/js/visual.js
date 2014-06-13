@@ -1,5 +1,4 @@
 /*TODO
-
 2. Attach the chat window
 3. Use socket.io to emit "new project" events ...
 4. Current User online ... Current Number of projects ...
@@ -12,6 +11,30 @@
 * To Watch
 1. More AngularJS Videos*/
 var visualApp = angular.module('visualApp', ['ngResource']);
+
+// socket.io helper
+visualApp.factory('socket', function($rootScope) {
+    var socket = io();
+    return {
+        on: function(eventName, callback) {
+            socket.on(eventName, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    callback.apply(socket, args);
+                });
+            });
+        },
+        emit: function(eventName, data, callback) {
+            socket.emit(eventName, data, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    if (callback)
+                        callback.apply(socket.args);
+                });
+            });
+        }
+    };
+});
 
 visualApp.factory('projectData', function($resource) {
 	return $resource('/api/getProjects', {}, {
@@ -46,22 +69,37 @@ visualApp.factory('commitData', function($http, $q){
 	}
 })
 
-visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectData){
+visualApp.controller('MainCtrl', function($scope, $http, commitData, projectData, socket){
 	$scope.graphs = ['Bar', 'Force', 'Pie'];
 	$scope.selection = 'Bar';
 	$scope.data = {
+		message : '', // message in the chat
+		messages : [], // all messages
 		projects : [], // of objects "project"
 		repoData : [], // of arrays of objects "commit"
 		barGraphData : [],
 	};
-	$scope.changeData = function() {
-		$scope.data.test[0] = $scope.a;
-		$scope.data.test[1] = $scope.b;
-		$scope.data.test[2] = $scope.c;
-		$scope.data.test[3] = $scope.d;
-	};
-
 	
+	socket.on('New Message', function(msg){
+		console.log(msg)
+		$scope.data.messages.push(msg);
+		console.log($scope.data.messages)
+	});
+
+	// Delete
+	$scope.changeData = function() {
+		$scope.data.barGraphData[0] = $scope.a;
+		$scope.data.barGraphData[1] = $scope.b;
+		$scope.data.barGraphData[2] = $scope.c;
+		$scope.data.barGraphData[3] = $scope.d;
+	};
+	
+	/* Send message in Chat */
+	$scope.sendMessage = function() {
+		socket.emit('New Message', $scope.data.message);
+		$scope.data.message = '';
+	}
+
 	/*Retrieve all registered projects*/
 	function getData() {
 		commitData.getAllProjects().then(function(data){
@@ -80,6 +118,7 @@ visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectDat
 	getData();
 });
 
+// Bar Graph Directive
 visualApp.directive('barGraph', function(){
 	function link(scope, elem, attr) {
 		var data = scope.data;
@@ -120,6 +159,7 @@ visualApp.directive('barGraph', function(){
 	}
 })
 
+// Force Graph Directive
 visualApp.directive('forceGraph', function(){
 	var link = function(scope, elem, attr) {
 		var data = scope.data;
@@ -136,6 +176,7 @@ visualApp.directive('forceGraph', function(){
 	}
 })
 
+// Pie Graph Directive
 visualApp.directive('pieGraph', function(){
 	var link = function(scope, elem, attr) {
 		var data = scope.data;
@@ -154,33 +195,4 @@ visualApp.directive('pieGraph', function(){
 
 
 // Helper functions
-var getLength = function(array) {
-	return array.length;
-}
 
-
-/*
-visualApp.directive('visual', function() {
-	return {
-		restrict : 'E',
-		template : '<div>This is the visual part</div>'
-	}
-});
-
-visualApp.directive('visualAd', function() {
-	return {
-		restrict : 'A',
-		link : function () {
-			alert('Hello World!')
-		}
-	}
-});
-
-visualApp.directive('enter', function() {
-	return function(scope, element) {
-		element.bind("mouseenter", function() {
-			console.log('a')
-			element.toggleClass("red");
-		})
-	}
-}) */

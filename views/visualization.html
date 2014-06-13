@@ -1,6 +1,4 @@
 <!-- TODO 
-1. Simple bar graph, with (# of commits * 10) as the length
-2. Use ng-switch to switch to different visualization
 3. Add chat window
 4. Print "New project xxx added by xxx" in the chat window
 -->
@@ -16,6 +14,7 @@
     <script src="/angular/angular.js"></script>
     <script src="/angular-resource/angular-resource.js"></script>
     <script src="/js/visual.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css">
@@ -39,6 +38,14 @@
         <input ng-model="c" type="number">
         <input ng-model="d" type="number">                
         <button ng-click="changeData()">Change Data</button>
+        <section class="chat">
+            <ul id="messages">
+                <li ng-repeat="msg in data.messages">{{msg}}</li>
+            </ul>
+            <form action="" ng-submit="sendMessage()">
+                <input id="m" autocomplete='off' ng-model="data.message"><button>Send</button>
+            </form>
+        </section>
         <select ng-model="selection" ng-options="graph for graph in graphs"></select>
         <div ng-switch on="selection">
             <bar-graph data="data.barGraphData" ng-switch-when="Bar"></bar-graph>

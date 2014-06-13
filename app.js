@@ -108,13 +108,18 @@ io.on('connection', function(socket){
             })
         })*/
     });
+    /* Message from Visualization Page */
+    socket.on('New Message', function(msg){
+        console.log(msg);
+        io.emit('New Message', msg);
+    })
     socket.on('message', function(msg) {
         /*
         var message = JSON.stringify({name:socket.name, data:msg});
         redisClient.lpush('messages', message, function(err, res){
             redisClient.ltrim('messages', 0, 10);
-        })*/
-        io.emit('message', {name:socket.name, data:msg});
+        })
+        io.emit('message', {name:socket.name, data:msg}); */
     });
     socket.on('disconnect', function() {
         console.log('disconnect');
