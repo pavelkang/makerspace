@@ -1,3 +1,8 @@
+/*TODO
+scope.$watch
+deferred*/
+
+
 var visualApp = angular.module('visualApp', ['ngResource']);
 
 visualApp.factory('projectData', function($resource) {
@@ -21,45 +26,48 @@ visualApp.factory('commitData', function($http, $q){
 		getProjInfo : function(projects) {
 			// projects is a list of repos
 			var deferred = $q.defer();
+			var repoData = [];
 			projects.forEach(function(project) {
-				$http.get()
+				$http.get(project.repoApi)
+				.success(function(data){
+					repoData.push(data);
+					deferred.resolve(repoData);					
+				})
 			})
+			return deferred.promise;
 		}
 	}
 })
 
 visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectData){
 	$scope.data = {
-		projects : [],
-		repoData : [],
+		projects : [], // of objects "project"
+		repoData : [], // of arrays of objects "commit"
 		test : [],
 	};
-	/*
-	(function tick() {
-		$scope.data.projects = projectData.query(function(){
-			$timeout(tick, 50000);
-		});
-	})() */
-	$scope.print = function() {
-		console.log($scope.data.test)
+	$scope.changeData = function() {
+		$scope.data.test[0] = $scope.a;
+		$scope.data.test[1] = $scope.b;
+		$scope.data.test[2] = $scope.c;
+		$scope.data.test[3] = $scope.d;
 	}
-	/*
-	$http.get('/api/getProjects').success(function(data){
-		$scope.data.projects = data;
-		$scope.data.projects.forEach(function(project){
-			// Get project information
-			$http.get(project.repoApi)
-			.success(function(repoData){
-				// Each repoData is an array of commits
-				$scope.data.repoData.push(repoData);
-				$scope.data.test.push(repoData.length);
-			});
-		});
-	}); */
+	
+	/*Retrieve all registered projects*/
 	function getData() {
 		commitData.getAllProjects().then(function(data){
 			$scope.data.projects = data;
+			getProjectInfo(data);
 		}, function(errMessage) {
+			$scope.error = errMessage;
+		});
+	};
+	/*Retrieve commits for all projects using Github API*/
+	function getProjectInfo(projects) {
+		commitData.getProjInfo(projects).then(function(data){
+			$scope.data.repoData = data;
+			console.log(data)
+			$scope.data.test = data.map(getLength);
+		}, function(errMessage){
 			$scope.error = errMessage;
 		});
 	};
@@ -75,11 +83,11 @@ visualApp.directive('barGraph', function(){
 		console.log(w);
 		console.log(h);
 		// Title
-		d3.select(el).append("h2")
+		var vis = d3.select(el).append("h2")
 		.text("Bar Graph")
-
 		// Graph
-		d3.select(el).selectAll('div')
+		var render = function(data) {
+		vis.selectAll('div')
         .data(data)
         .enter().append('div')
         .style('width', function(d){return d+'%';})
@@ -88,15 +96,21 @@ visualApp.directive('barGraph', function(){
         .style('background-color', 'tomato')
         .style('color' , 'white')
         .style('text-align' , 'right')
-        .text(function(d){return d;})
-		scope.$watch('data', function(data){
-			console.log('hi');
-			console.log(data)
-		})
+        .text(function(d){return d;}); }
+		render(data);
+		scope.$watch('data', function(newData, oldData){
+			console.log(newData);
+			if (!newData) { return ;}
+			else {
+				vis.selectAll('*').remove();
+				render(newData);
+			}
+		}, true)
 	};
 	return {
 		restrict : 'E',
 		link : link,
+		replace : true,
 		scope : {
 			data : '='
 		}
@@ -106,11 +120,9 @@ visualApp.directive('barGraph', function(){
 
 
 // Helper functions
-
-
-
-
-
+var getLength = function(array) {
+	return array.length;
+}
 
 
 /*
@@ -137,5 +149,4 @@ visualApp.directive('enter', function() {
 			element.toggleClass("red");
 		})
 	}
-})
-*/
+}) */
