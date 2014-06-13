@@ -7,6 +7,8 @@
 1. scope.$watch
 2. deferred
 3. socket.io
+4. replace: true
+5. why elem[0]
 * To Watch
 1. More AngularJS Videos*/
 var visualApp = angular.module('visualApp', ['ngResource']);
@@ -29,17 +31,16 @@ visualApp.factory('commitData', function($http, $q){
 			});
 			return deferred.promise;
 		},
-		getProjInfo : function(projects) {
-			// projects is a list of repos
+
+		getProjInfo : function(project) {
 			var deferred = $q.defer();
-			var repoData = [];
-			projects.forEach(function(project) {
-				$http.get(project.repoApi)
-				.success(function(data){
-					repoData.push(data);
-					deferred.resolve(repoData);					
-				})
+			$http.get(project.repoApi)
+			.success(function(data){
+				deferred.resolve(data);
 			})
+			.error(function(){
+				deferred.reject('An error occurred!')
+			});
 			return deferred.promise;
 		}
 	}
@@ -49,7 +50,7 @@ visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectDat
 	$scope.data = {
 		projects : [], // of objects "project"
 		repoData : [], // of arrays of objects "commit"
-		test : [],
+		barGraphData : [],
 	};
 	$scope.changeData = function() {
 		$scope.data.test[0] = $scope.a;
@@ -62,21 +63,17 @@ visualApp.controller('MainCtrl', function( $scope, $http, commitData, projectDat
 	function getData() {
 		commitData.getAllProjects().then(function(data){
 			$scope.data.projects = data;
-			getProjectInfo(data);
+			data.forEach(function(project){
+				commitData.getProjInfo(project).then(function(data){
+					// Better data structure
+					$scope.data.barGraphData.push(data.length);
+				})
+			})
 		}, function(errMessage) {
 			$scope.error = errMessage;
 		});
 	};
-	/*Retrieve commits for all projects using Github API*/
-	function getProjectInfo(projects) {
-		commitData.getProjInfo(projects).then(function(data){
-			$scope.data.repoData = data;
-			console.log(data)
-			$scope.data.test = data.map(getLength);
-		}, function(errMessage){
-			$scope.error = errMessage;
-		});
-	};
+
 	getData();
 });
 
@@ -86,8 +83,6 @@ visualApp.directive('barGraph', function(){
 		var el = elem[0]; // ???
 		var w = el.clientWidth;
 		var h = el.clientHeight;
-		console.log(w);
-		console.log(h);
 		// Title
 		var vis = d3.select(el).append("h2")
 		.text("Bar Graph")
@@ -105,7 +100,6 @@ visualApp.directive('barGraph', function(){
         .text(function(d){return d;}); }
 		render(data);
 		scope.$watch('data', function(newData, oldData){
-			console.log(newData);
 			if (!newData) { return ;}
 			else {
 				vis.selectAll('*').remove();
@@ -123,6 +117,37 @@ visualApp.directive('barGraph', function(){
 	}
 })
 
+visualApp.directive('forceGraph', function(){
+	var link = function(scope, elem, attr) {
+		var data = scope.data;
+		var el = elem[0];
+		var vis = d3.select(el).append('h2').text('Force Graph')
+	}
+	return {
+		restrict : 'E',
+		link : link,
+		replace : true,
+		scope : {
+			data : '='
+		}
+	}
+})
+
+visualApp.directive('pieGraph', function(){
+	var link = function(scope, elem, attr) {
+		var data = scope.data;
+		var el = elem[0];
+		var vis = d3.select(el).append('h2').text('Pie Graph')
+	}
+	return {
+		restrict : 'E',
+		link : link,
+		replace : true,
+		scope : {
+			data : '='
+		}
+	}
+})
 
 
 // Helper functions
