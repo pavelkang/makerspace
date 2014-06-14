@@ -5,7 +5,7 @@
 * To Understand
 1. scope.$watch
 2. deferred
-3. socket.io
+3. socket.io ($rootScope)
 4. replace: true
 5. why elem[0]
 * To Watch
@@ -29,7 +29,7 @@ visualApp.factory('socket', function($rootScope) {
                 var args = arguments;
                 $rootScope.$apply(function() {
                     if (callback)
-                        callback.apply(socket.args);
+                        callback.apply(socket, args);
                 });
             });
         }
@@ -80,11 +80,22 @@ visualApp.controller('MainCtrl', function($scope, $http, commitData, projectData
 		barGraphData : [],
 	};
 	
-	socket.on('New Message', function(msg){
+	/* New Message in Chat*/
+	socket.on('visual:message', function(msg){
 		console.log(msg)
 		$scope.data.messages.push(msg);
 		console.log($scope.data.messages)
 	});
+	/* New Project in Profile */
+	socket.on('profile:new', function(data){
+		console.log(data);
+		$scope.data.messages.push("Project " + data.repo + " was created by " + data.name);
+	})
+
+	// Will cause error if the user did not log in
+	// For debugging purpose, I currently allowed users
+	// to access visualization page without loggin in
+	//console.log(JSON.parse(localStorage.user));
 
 	// Delete
 	$scope.changeData = function() {

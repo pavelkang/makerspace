@@ -109,9 +109,12 @@ io.on('connection', function(socket){
         })*/
     });
     /* Message from Visualization Page */
-    socket.on('New Message', function(msg){
-        console.log(msg);
-        io.emit('New Message', msg);
+    socket.on('visual:message', function(msg){
+        io.emit('visual:message', msg);
+    });
+    /* New Project from the Profile Page */
+    socket.on('profile:new', function(data){
+        io.emit('profile:new', data);
     })
     socket.on('message', function(msg) {
         /*

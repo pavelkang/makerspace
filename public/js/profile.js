@@ -42,11 +42,13 @@ profileApp.controller('AppCtrl', function($window, $scope, $http, socket) {
     // Initialize user
     $http.get('/api/getUser')
         .success(function(user) {
+            localStorage.user = JSON.stringify(user);
             $scope.info.username = user.github.name;
             if (user.repo) {
                 $scope.info.repo = user.repo;
                 $scope.info.repoApi = user.repoApi;
                 $scope.helpers.hasProject = true;
+
             } else {
                 $scope.helpers.noProject = true;
             }
@@ -67,7 +69,7 @@ profileApp.controller('AppCtrl', function($window, $scope, $http, socket) {
                 .success(function(data) {
                     if (data === 'Y') {
                         // Successfully registered a project
-                        socket.emit('new project', {user:$scope.info.username, repo:$scope.info.repo});
+                        socket.emit('profile:new', {name : $scope.info.username, repo : $scope.info.repo})
                         alert('Project ' + $scope.info.repo + ' registered!');
                         $window.location.reload();
                     } else {
