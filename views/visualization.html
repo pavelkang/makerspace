@@ -1,9 +1,3 @@
-<!-- TODO 
-3. Add chat window
-4. Print "New project xxx added by xxx" in the chat window
--->
-
-
 <!DOCTYPE html>
 <html ng-app="visualApp">
 
@@ -32,15 +26,10 @@
         </nav>
     </header>
     <div class="container">
-        <center><h1>Visualization</h1></center> 
-        <input ng-model="a" type="number">
-        <input ng-model="b" type="number">
-        <input ng-model="c" type="number">
-        <input ng-model="d" type="number">                
-        <button ng-click="changeData()">Change Data</button>
+        <center><h1>Visualization</h1></center>
         <section class="chat">
             <ul id="messages">
-                <li ng-repeat="msg in data.messages">{{msg}}</li>
+                <li ng-repeat="msg in data.messages track by $index">{{data.messages[$index]}}</li>
             </ul>
             <form action="" ng-submit="sendMessage()">
                 <input id="m" autocomplete='off' ng-model="data.message"><button>Send</button>

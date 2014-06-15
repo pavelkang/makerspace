@@ -1,4 +1,5 @@
 /*TODO
+1. Verify repo in profile
 2. Attach the chat window
 3. Use socket.io to emit "new project" events ...
 4. Current User online ... Current Number of projects ...
@@ -82,9 +83,7 @@ visualApp.controller('MainCtrl', function($scope, $http, commitData, projectData
 	
 	/* New Message in Chat*/
 	socket.on('visual:message', function(msg){
-		console.log(msg)
 		$scope.data.messages.push(msg);
-		console.log($scope.data.messages)
 	});
 	/* New Project in Profile */
 	socket.on('profile:new', function(data){
@@ -96,18 +95,10 @@ visualApp.controller('MainCtrl', function($scope, $http, commitData, projectData
 	// For debugging purpose, I currently allowed users
 	// to access visualization page without loggin in
 	//console.log(JSON.parse(localStorage.user));
-
-	// Delete
-	$scope.changeData = function() {
-		$scope.data.barGraphData[0] = $scope.a;
-		$scope.data.barGraphData[1] = $scope.b;
-		$scope.data.barGraphData[2] = $scope.c;
-		$scope.data.barGraphData[3] = $scope.d;
-	};
 	
 	/* Send message in Chat */
 	$scope.sendMessage = function() {
-		socket.emit('New Message', $scope.data.message);
+		socket.emit('visual:message', $scope.data.message);
 		$scope.data.message = '';
 	}
 
